@@ -61,13 +61,19 @@ export class Miniflux {
     post = (path: string, data: any): Promise<any> => this.request(path, data, 'POST')
     delete = (path: string): Promise<any> => this.request(path, null, 'DELETE')
 
-    /**
-     * /v1/
-     */
+    // POST /v1/discover
     discover = (url: string): Promise<FeedLink[]> => this.post('/v1/discover', `{"url":"${url}"}`)
+
+    // GET /v1/feeds
     feeds = (): Promise<Feed[]> => this.get('/v1/feeds')
+
+    // GET /v1/feeds/:feed_id
     get_feed = (feed_id: number): Promise<Feed> => this.get(`/v1/feeds/${feed_id}`)
+
+    // GET /v1/feeds/:feed_id/icon
     get_feed_icon = (feed_id: number): Promise<Icon> => this.get(`/v1/feeds/${feed_id}/icon`)
+    
+    // POST /v1/feeds
     create_feed = (feed_url: number, category_id?: number): Promise<CreatedFeed> => {
         let feed_settings = `{"feed_url": "${feed_url}"`
         if (category_id !== 0) {
@@ -78,13 +84,15 @@ export class Miniflux {
         
         return this.post(`/v1/feeds`, feed_settings);
     }
+    
+    // PUT /v1/feeds/:feed_id
     update_feed = (feed_id: number, title?: string, category_id?: number): Promise<Feed> => {
         title = esc(title);
         if (title == null && category_id == null)
             return new Promise((resolve, reject) => reject('No title or category specified'));
         let feed_settings = '{';
         if (title != null)
-            feed_settings += `"title": "${title}"`
+            feed_settings += `"title": "${esc(title)}"`
         if (category_id != null) {
             if (title != null)
                 feed_settings += ','
@@ -92,12 +100,23 @@ export class Miniflux {
         }
         feed_settings += '}';
 
-        return this.put(`/v1/feeds/${feed_id}`, `{"title": "${title}", "category": {"id": ${category_id}}}`);
+        return this.put(`/v1/feeds/${feed_id}`, feed_settings);
     }
+    
+    // PUT /v1/feeds/:feed_id/refresh
     refresh_feed = (feed_id: number): Promise<void> => this.put(`/v1/feeds/${feed_id}/refresh`)
+    
+    // DELETE /v1/feeds/:feed_id
     remove_feed = (feed_id: number): Promise<void> => this.delete(`/v1/feeds/${feed_id}`)
+    
+    // GET /v1/feeds/:feed_id/entries/:entry_id
     get_feed_entry = (feed_id: number, entry_id: number): Promise<Entry> => this.get(`/v1/feeds/${feed_id}/entries/${entry_id}`)
+    
+    // GET /v1/entries/:entry_id
     get_entry = (entry_id: number): Promise<Entry> => this.get(`/v1/entries/${entry_id}`)
+    
+    // GET /v1/feeds/:feed_id/entries
+    // params: status, offset, limit, direction, order
     get_feed_entries = (feed_id: number, filter?: Filter): Promise<EntryList[]> => {
         let options = [];
         if (filter != null) {
@@ -120,6 +139,9 @@ export class Miniflux {
         }
         return this.get(path);
     }
+    
+    // GET /v1/entries
+    // params: status, offset, limit, direction, order
     get_entries = (filter?: Filter): Promise<EntryList[]> => {
         let options = [];
         if (filter != null) {
@@ -142,17 +164,42 @@ export class Miniflux {
         }
         return this.get(path);
     }
-    update_entries = (entry_ids: number[], status: EntryStatus): Promise<void> => this.put(`/v1/entries`, `{\"entry_ids\": [${entry_ids.join(',')}], \"status\": \"${status}\"}`)
+    
+    // PUT /v1/entries
+    update_entries = (entry_ids: number[], status: EntryStatus): Promise<void> => this.put(`/v1/entries`, `{\"entry_ids\": [${entry_ids.join(',')}], \"status\": \"${esc(status)}\"}`)
+    
+    // PUT /v1/entries/:entry_id/bookmark
     toggle_bookmark = (entry_id: number): Promise<void> => this.put(`/v1/entries/${entry_id}/bookmark`)
+    
+    // GET /v1/categories
     categories = (): Promise<Category[]> => this.get(`/v1/categories`)
+    
+    // POST /v1/categories
     create_category = (title: string): Promise<Category> => this.post('/v1/categories', `{\"title\": \"${esc(title)}\"}`)
+    
+    // PUT /v1/categories/:category_id
     update_category = (category_id: number, title: string): Promise<Category> => this.put(`/v1/categories/${category_id}`, `{\"title\": \"${esc(title)}\"}`)
+    
+    // DELETE /v1/categories/:category_id
     delete_category = (category_id: number): Promise<void> => this.delete(`/v1/categories/${category_id}`)
+    
+    // GET /v1/export
     ompl_export = (): Promise<string> => this.get('/v1/export')
+    
+    // POST /v1/users
     create_user = (username: string, password: string, is_admin: boolean): Promise<User> => this.post(`/v1/users`, `{\"username\":\"${esc(username)}\", \"password:\": \"${esc(password)}\", \"is_admin\": ${is_admin}}`)
+    
+    // PUT /v1/users/:user_id
     update_user = (user_id: number, user_settings: UserSettings): Promise<User> => this.put(`/v1/users/${user_id}`, user_settings)
+    
+    // GET /v1/users
     users = (): Promise<User[]> => this.get('/v1/users')
+    
+    // GET /v1/users/:user
+    // note that this accepts a user's ID or username
     get_user = (user: number | string): Promise<User> => this.get(`/v1/users/${user}`)
+    
+    // DELETE /v1/users/:user_id
     delete_user = (user_id: number): Promise<void> => this.delete(`/v1/users/${user_id}`)
 }
 
