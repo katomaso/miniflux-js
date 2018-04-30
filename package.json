@@ -1,15 +1,15 @@
 {
   "name": "miniflux-rss",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Binding to Miniflux 2 REST API",
   "main": "build/module.js",
   "repository": {
-      "type" : "git",
-      "url" : "https://github.com/isavegas/miniflux-rss"
+    "type": "git",
+    "url": "https://github.com/isavegas/miniflux-rss"
   },
   "keywords": [
-      "rss",
-      "miniflux"
+    "rss",
+    "miniflux"
   ],
   "scripts": {
     "test": "mocha -r ts-node/register src/**/*.spec.ts",
