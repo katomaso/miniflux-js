@@ -2,7 +2,7 @@
 	"compileOnSave": true,
 	"compilerOptions": {
 		"allowJs": false,
-		"declaration": false,
+		"declaration": true,
 		"forceConsistentCasingInFileNames": true,
 		"module": "commonjs",
 		"moduleResolution": "node",
@@ -16,7 +16,7 @@
 		"removeComments": true,
 		//"rootDir": "src",
 		"sourceMap": true,
-		"target": "es6"
+        "target": "es6"
 	},
 	// "filesGlob": [
 	//	"src/**/*.ts"
