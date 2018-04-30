@@ -1,8 +1,9 @@
 {
   "name": "miniflux-rss",
-  "version": "0.0.2",
+  "version": "0.0.4",
   "description": "Binding to Miniflux 2 REST API",
-  "main": "build/module.js",
+  "main": "build/src/module",
+  "typings": "build/src/module",
   "repository": {
     "type": "git",
     "url": "https://github.com/isavegas/miniflux-rss"
@@ -12,11 +13,11 @@
     "miniflux"
   ],
   "scripts": {
-    "test": "mocha -r ts-node/register src/**/*.spec.ts",
-    "test-watch": "mocha -w -r ts-node/register src/**/*.spec.ts --watch-extensions ts",
+    "test": "mocha -r ts-node/register test/**/*.spec.ts",
+    "test-watch": "mocha -w -r ts-node/register test/**/*.spec.ts --watch-extensions ts",
     "build": "tsc",
     "build-watch": "tsc -w",
-    "postinstall": "tsc"
+    "prepublishOnly": "tsc -p ."
   },
   "author": "isavegas <isavegas2006@gmail.com>",
   "license": "MIT",
