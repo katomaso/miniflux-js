@@ -1,6 +1,6 @@
 {
   "name": "miniflux-rss",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Binding to Miniflux 2 REST API",
   "main": "build/src/module",
   "typings": "build/src/module",
