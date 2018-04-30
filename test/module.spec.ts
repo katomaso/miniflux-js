@@ -1,4 +1,4 @@
-import { Miniflux, User, MinifluxError, Feed, FeedLink, Icon, CreatedFeed, Entry, EntryDirection, EntryStatus, EntryOrder, Category } from './module';
+import { Miniflux, User, MinifluxError, Feed, FeedLink, Icon, CreatedFeed, Entry, EntryDirection, EntryStatus, EntryOrder, Category } from '../src/module';
 
 import { expect } from 'chai';
 import 'mocha';

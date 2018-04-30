@@ -14,11 +14,15 @@
 		"outDir": "build",
 		"pretty": true,
 		"removeComments": true,
-		"rootDir": "src",
+		//"rootDir": "src",
 		"sourceMap": true,
 		"target": "es6"
 	},
-	"filesGlob": [
+	// "filesGlob": [
+	//	"src/**/*.ts"
+	//],
+    "include": [
+        "test/**/*.ts",
 		"src/**/*.ts"
-	]
+    ]
 }
