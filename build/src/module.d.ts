@@ -61,18 +61,18 @@ export interface Filter {
 export declare enum EntryStatus {
     READ = "read",
     UNREAD = "unread",
-    REMOVED = "removed",
+    REMOVED = "removed"
 }
 export declare enum EntryOrder {
     ID = "id",
     STATUS = "status",
     PUBLISHED_AT = "published_at",
     CATEGORY_TITLE = "category_title",
-    CATEGORY_ID = "category_id",
+    CATEGORY_ID = "category_id"
 }
 export declare enum EntryDirection {
     ASCENDING = "asc",
-    DESCENDING = "desc",
+    DESCENDING = "desc"
 }
 export interface MinifluxError {
     error_message: string;
