@@ -1,8 +1,3 @@
-import { request, globalAgent } from 'https';
-import { ClientRequest } from 'http';
-import { URL } from 'url';
-import { settings } from 'cluster';
-
 let esc: (str: string | null) => string | null = str => {
     if (str != null)
         return str.replace('"', '\\"').replace('\'', '\\\'');
@@ -10,50 +5,61 @@ let esc: (str: string | null) => string | null = str => {
         return null
 }
 
+export class OfflineError extends Error{};
+export class InvalidCredentialsError extends Error{};
+
 export class Miniflux {
-    public url: URL;
-    public username: string;
+    private url: string;
+    private username: string;
+    private connected: boolean;
+    private offline: boolean;
     private authorization: string;
-    constructor(server_url: string, username: string, password: string) {
-        this.url = new URL(server_url);
+
+    async connect(url: string, username: string, password: string): Promise<boolean> {
+        if (this.connected) {
+            return true;
+        }
+        this.url = url;
         this.username = username;
-        this.authorization = `Basic ${Buffer.from(username + ':' + password).toString('base64')}`;
+        this.authorization = `Basic ${btoa(username + ':' + password)}`;
+        this.connected = await this.get_me().then((user: User) => Boolean(user.username));
+        return this.connected;
     }
+    get_url(): string { return this.url; }
+    get_username(): string { return this.username; }
+    is_connected(): boolean { return this.connected; }
+    is_offline(): boolean { return this.offline; }
 
     request(path: string, data: any = null, method: string = 'GET'): Promise<any> {
-        if (typeof data == 'object')
-            data = JSON.stringify(data);
-        else if (data == null)
-            data = '';
-        return new Promise((resolve, reject) => {
-            let req = request({
-                hostname: this.url.hostname,
-                port: this.url.port,
-                path: path,
-                method: method,
-                headers: {
-                    'Authorization': this.authorization,
-                    'Content-Type': 'application/json'
+        let options: RequestInit = {
+            method: method,
+            headers: {
+                'Authorization': this.authorization
+            }
+        };
+
+        if (data != null) {
+            if (typeof data == 'object') {
+                data = JSON.stringify(data);
+            }
+            options.body = data;
+        }
+        return fetch(new Request(this.url + path, options))
+            .catch(err => {
+            this.offline = true;
+            throw new OfflineError("you are offline");
+        })
+            .then((response) => {
+            this.offline = false;
+            if (!response.ok) {
+                if (response.status == 401) {
+                    throw new InvalidCredentialsError("invalid credentials");
                 }
-            }, (response) => {
-                let body = '';
-                response.on('data', chunk => body += chunk);
-                response.on('end', () => {
-                    if (response.statusCode == 200) {
-                        if (response.headers["content-type"].startsWith('application/json'))
-                            resolve(JSON.parse(body))
-                        else
-                            resolve(body)
-                    } else if (response.statusCode == 204) {
-                        resolve(null)
-                    } else {
-                        reject(JSON.parse(body));
-                    }
-                });
-                response.on('error', reject);
-            });
-            req.write(data);
-            req.end();
+                else {
+                    throw new Error(`${response.status}: ${response.statusText}`);
+                }
+            }
+            return response.json();
         });
     }
     get = (path: string): Promise<any> => this.request(path, null, 'GET')
@@ -140,9 +146,10 @@ export class Miniflux {
         return this.get(path);
     }
     
+    
     // GET /v1/entries
     // params: status, offset, limit, direction, order
-    get_entries = (filter?: Filter): Promise<EntryList[]> => {
+    get_entries = (filter?: Filter): Promise<EntryList> => {
         let options = [];
         if (filter != null) {
             if (filter.status != null)
@@ -198,7 +205,8 @@ export class Miniflux {
     // GET /v1/users/:user
     // note that this accepts a user's ID or username
     get_user = (user: number | string): Promise<User> => this.get(`/v1/users/${user}`)
-    
+    get_me = (): Promise<User> => this.get(`/v1/users/${this.username}`);
+
     // DELETE /v1/users/:user_id
     delete_user = (user_id: number): Promise<void> => this.delete(`/v1/users/${user_id}`)
 }

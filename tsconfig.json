@@ -4,7 +4,7 @@
 		"allowJs": false,
 		"declaration": true,
 		"forceConsistentCasingInFileNames": true,
-		"module": "commonjs",
+		"module": "ESNext",
 		"moduleResolution": "node",
 		"newLine": "LF",
 		"noEmitOnError": true,
@@ -16,13 +16,13 @@
 		"removeComments": true,
 		//"rootDir": "src",
 		"sourceMap": true,
-        "target": "es6"
+        "target": "ESNext"
 	},
 	// "filesGlob": [
 	//	"src/**/*.ts"
 	//],
     "include": [
-        "test/**/*.ts",
+        // "test/**/*.ts",
 		"src/**/*.ts"
     ]
 }

@@ -1,37 +1,26 @@
 {
-  "name": "miniflux-rss",
+  "name": "miniflux-js",
   "version": "0.1.0",
-  "description": "Binding to Miniflux 2 REST API",
-  "main": "build/src/module",
-  "typings": "build/src/module",
+  "description": "Browser usable binding to Miniflux 2 REST API",
+  "main": "build/miniflux.js",
+  "browser": "build/miniflux.js",
+  "types": "build/miniflux.d.ts",
   "repository": {
     "type": "git",
-    "url": "https://github.com/isavegas/miniflux-rss"
+    "url": "https://github.com/katomaso/miniflux-js"
   },
   "keywords": [
     "rss",
-    "miniflux"
+    "miniflux",
+    "browser"
   ],
   "scripts": {
-    "test": "mocha -r ts-node/register test/**/*.spec.ts",
-    "test-watch": "mocha -w -r ts-node/register test/**/*.spec.ts --watch-extensions ts",
-    "build": "tsc",
-    "build-watch": "tsc -w",
-    "prepublishOnly": "tsc -p ."
+    "build": "tsc"
   },
-  "author": "isavegas <isavegas2006@gmail.com>",
+  "author": "tpeterka <tomas.peterk@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "typescript": "^3.8.3"
+    "typescript": "^4.8"
   },
-  "devDependencies": {
-    "@types/chai": "^4.1.3",
-    "@types/mocha": "^7.0.2",
-    "@types/nock": "^11.1.0",
-    "@types/node": "^13.9.1",
-    "chai": "^4.1.2",
-    "mocha": "^7.1.0",
-    "nock": "^12.0.3",
-    "ts-node": "^8.6.2"
-  }
+  "type": "module"
 }
